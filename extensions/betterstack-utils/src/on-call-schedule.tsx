@@ -17,6 +17,7 @@ export default function Command() {
   const [scheduleName, setScheduleName] = useState("");
   const [noSchedule, setNoSchedule] = useState(false);
   const [timeRange, setTimeRange] = useState<TimeRange>("current-month");
+  const [selectedUser, setSelectedUser] = useState<string>("");
 
   useEffect(() => {
     async function load() {
@@ -69,19 +70,42 @@ export default function Command() {
     );
   }
 
+  const userNames = [...new Set(events.map((e) => `${e.user.first_name} ${e.user.last_name}`.trim()))].sort();
+  const filteredEvents = selectedUser
+    ? events.filter((e) => `${e.user.first_name} ${e.user.last_name}`.trim() === selectedUser)
+    : events;
+
   const nextTimeRange: TimeRange = timeRange === "current-month" ? "3-months" : "current-month";
   const window = timeRange === "current-month" ? getCurrentMonthWindow() : getThreeMonthWindow();
-  const weeks = buildWeeklyScheduleSvgs(events, today, window);
+  const weeks = buildWeeklyScheduleSvgs(filteredEvents, today, window);
   const markdown = isLoading ? "" : weeks.map((week) => `![${week.label}](${toSvgDataUri(week.svg)})`).join("\n\n");
 
   return (
     <Detail
       isLoading={isLoading}
-      navigationTitle={scheduleName}
+      navigationTitle={selectedUser ? `${scheduleName} — ${selectedUser}` : scheduleName}
       markdown={markdown}
       actions={
         <ActionPanel>
           <Action title={`Show ${TIME_RANGE_LABELS[nextTimeRange]}`} onAction={() => setTimeRange(nextTimeRange)} />
+          {userNames.length > 0 && (
+            <ActionPanel.Submenu
+              title={selectedUser ? `Filter: ${selectedUser}` : "Filter by User"}
+              shortcut={{ modifiers: ["cmd"], key: "f" }}
+            >
+              <Action title="All Users" onAction={() => setSelectedUser("")} />
+              {userNames.map((name) => (
+                <Action key={name} title={name} onAction={() => setSelectedUser(name)} />
+              ))}
+            </ActionPanel.Submenu>
+          )}
+          {selectedUser && (
+            <Action
+              title="Clear User Filter"
+              shortcut={{ modifiers: ["cmd", "shift"], key: "f" }}
+              onAction={() => setSelectedUser("")}
+            />
+          )}
         </ActionPanel>
       }
     />
