@@ -176,7 +176,7 @@ function addDays(date: Date, days: number): Date {
 }
 
 function formatWeekday(date: Date): string {
-  return date.toLocaleDateString("default", { weekday: "short" }).toUpperCase();
+  return date.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
 }
 
 function formatWeekLabel(days: Date[]): string {
@@ -186,23 +186,14 @@ function formatWeekLabel(days: Date[]): string {
 }
 
 function formatMonthLabel(days: Date[]): string {
-  const firstMonth = days[0].toLocaleDateString("default", {
-    month: "long",
-    year: "numeric",
-  });
-  const lastMonth = days[6].toLocaleDateString("default", {
-    month: "long",
-    year: "numeric",
-  });
+  const firstMonth = days[0].toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const lastMonth = days[6].toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
   return firstMonth === lastMonth ? firstMonth : `${firstMonth} / ${lastMonth}`;
 }
 
 function formatShortDate(date: Date): string {
-  return date.toLocaleDateString("default", {
-    month: "short",
-    day: "numeric",
-  });
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
 function isSameDay(a: Date, b: Date): boolean {
