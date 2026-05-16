@@ -2,6 +2,8 @@
 
 View your BetterStack on-call schedule directly from Raycast.
 
+![betterstack.png](docs/betterstack.png)
+
 ## Setup
 
 This extension requires a BetterStack API token.
