@@ -1,4 +1,4 @@
-import { getOnCallForDay, getThreeMonthWindow, type OnCallEvent } from "./dates";
+import { getOnCallForDay, type OnCallEvent } from "./dates";
 import { getSvgColorForPerson } from "./colors";
 
 interface WeekSchedule {
@@ -21,8 +21,12 @@ const HEADER_HEIGHT = 28;
 const ROW_TOP = 58;
 const ROW_HEIGHT = 46;
 
-export function buildWeeklyScheduleSvgs(events: OnCallEvent[], today = new Date()): WeekSchedule[] {
-  const { start, end } = getThreeMonthWindow();
+export function buildWeeklyScheduleSvgs(
+  events: OnCallEvent[],
+  today: Date,
+  window: { start: Date; end: Date },
+): WeekSchedule[] {
+  const { start, end } = window;
   const firstWeekStart = startOfWeek(start);
   const lastWeekStart = startOfWeek(end);
   const weeks: WeekSchedule[] = [];
