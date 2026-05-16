@@ -1,5 +1,11 @@
-# raycast-betterstack-utils
+# BetterStack Utils
 
-[Raycast](https://www.raycast.com/) extension with some utilities for BetterStack
+View your BetterStack on-call schedule directly from Raycast.
 
-![betterstack.png](docs/betterstack.png)
+## Setup
+
+This extension requires a BetterStack API token.
+
+1. Go to [BetterStack Global API Tokens](https://betterstack.com/settings/global-api-tokens)
+2. Create a new token (or copy an existing one)
+3. Paste the token into the **API Token** field when prompted by Raycast
