@@ -2,4 +2,4 @@
 
 [Raycast](https://www.raycast.com/) extension with some utilities for BetterStack
 
-![spanish-tv-guide-1.png](docs/betterstack.png)
+![betterstack.png](docs/betterstack.png)

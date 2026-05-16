@@ -35,9 +35,6 @@
     "prettier": "^3.0.0",
     "typescript": "^5.8.0"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"]
-  },
   "scripts": {
     "build": "ray build -e dist",
     "dev": "ray develop",
