@@ -3,8 +3,7 @@ import { DateTime } from "luxon";
 import { isString } from "./stringUtils";
 
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z?$/;
-const TIMEZONE = "UTC+1";
-const DEFAULT_TIME_ZONE = "Europe/Madrid";
+const TIMEZONE = "Europe/Madrid";
 
 const getSystemTimezone = (): string => {
   try {
@@ -14,7 +13,7 @@ const getSystemTimezone = (): string => {
   } catch {
     // fall through to Intl fallback
   }
-  return Intl.DateTimeFormat().resolvedOptions().timeZone ?? DEFAULT_TIME_ZONE;
+  return Intl.DateTimeFormat().resolvedOptions().timeZone ?? TIMEZONE;
 };
 
 const systemTimezone = getSystemTimezone();
