@@ -12,9 +12,9 @@ const getSystemTimezone = (): string => {
     const match = output.match(/zoneinfo\/(.+)$/);
     if (match) return match[1];
   } catch {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone ?? DEFAULT_TIME_ZONE;
+    // fall through to Intl fallback
   }
-  return DEFAULT_TIME_ZONE;
+  return Intl.DateTimeFormat().resolvedOptions().timeZone ?? DEFAULT_TIME_ZONE;
 };
 
 const systemTimezone = getSystemTimezone();
