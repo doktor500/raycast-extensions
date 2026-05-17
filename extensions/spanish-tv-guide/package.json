@@ -1,7 +1,7 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "spanish-tv-guide",
-  "title": "Spanish Tv Guide",
+  "title": "Spanish TV Guide",
   "description": "Browse the Spanish TV Guide",
   "icon": "app-icon.png",
   "author": "doktor500",
@@ -12,7 +12,7 @@
   "commands": [
     {
       "name": "index",
-      "title": "Spanish Tv Guide",
+      "title": "Spanish TV Guide",
       "description": "Displays the Spanish TV Guide",
       "mode": "view"
     }
