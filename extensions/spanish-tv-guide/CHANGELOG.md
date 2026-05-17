@@ -1,6 +1,6 @@
 # spanish-tv-guide Changelog
 
-## [Bug fixes and dependency updates] - {PR_MERGE_DATE}
+## [Bug fixes and dependency updates] - 2026-05-17
 
 - Fix timezone issue
 - Fix icon for Raycast 2
