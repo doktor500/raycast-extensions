@@ -2,14 +2,6 @@ import { getPreferenceValues } from "@raycast/api";
 
 const BASE_URL = "https://uptime.betterstack.com/api/v2";
 
-function getHeaders(): Record<string, string> {
-  const { apiToken } = getPreferenceValues<Preferences>();
-  return {
-    Authorization: `Bearer ${apiToken}`,
-    "Content-Type": "application/json",
-  };
-}
-
 export interface Calendar {
   id: string;
   attributes: {
@@ -62,34 +54,9 @@ interface EventsResponse {
   events: BetterStackEvent[];
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url, { headers: getHeaders() });
-  if (!response.ok) {
-    if (response.status === 401) {
-      throw new Error("Invalid API token. Check your BetterStack API token in extension preferences.");
-    }
-    throw new Error(`BetterStack API error: ${response.status} ${response.statusText}`);
-  }
-  return (await response.json()) as T;
-}
-
-async function fetchAllPages<T>(url: string): Promise<ApiResponse<T>> {
-  const results: T[] = [];
-  const included: IncludedUser[] = [];
-  let nextUrl: string | undefined = url;
-
-  while (nextUrl) {
-    const json: ApiResponse<T> = await fetchJson<ApiResponse<T>>(nextUrl);
-    results.push(...json.data);
-    included.push(...(json.included ?? []));
-    nextUrl = json.pagination?.next ?? undefined;
-  }
-
-  return { data: results, included };
-}
-
 export async function getOnCallCalendars(): Promise<Calendar[]> {
   const response = await fetchAllPages<Calendar>(`${BASE_URL}/on-calls`);
+
   return response.data;
 }
 
@@ -116,6 +83,33 @@ export async function getCalendarEvents(calendarId: string, from: Date, to: Date
   });
 }
 
+async function fetchAllPages<T>(url: string): Promise<ApiResponse<T>> {
+  const fetch = async (currentUrl: string, acc: ApiResponse<T>): Promise<ApiResponse<T>> => {
+    const json: ApiResponse<T> = await fetchJson<ApiResponse<T>>(currentUrl);
+    const response: ApiResponse<T> = {
+      data: [...acc.data, ...json.data],
+      included: [...(acc.included ?? []), ...(json.included ?? [])],
+    };
+
+    const nextPage = json.pagination?.next;
+    return nextPage ? fetch(nextPage, response) : response;
+  };
+
+  return fetch(url, { data: [], included: [] });
+}
+
+async function fetchJson<T>(url: string): Promise<T> {
+  const response = await fetch(url, { headers: getHeaders() });
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error("Invalid API token. Check your BetterStack API token in extension preferences.");
+    }
+    throw new Error(`BetterStack API error: ${response.status} ${response.statusText}`);
+  }
+
+  return (await response.json()) as T;
+}
+
 function buildUserFromEmail(email: string): CalendarEvent["attributes"]["user"] {
   const name = email.split("@")[0] ?? email;
   const [firstName = name, ...lastNameParts] = name
@@ -127,5 +121,13 @@ function buildUserFromEmail(email: string): CalendarEvent["attributes"]["user"] 
     first_name: firstName,
     last_name: lastNameParts.join(" "),
     email,
+  };
+}
+
+function getHeaders(): Record<string, string> {
+  const { apiToken } = getPreferenceValues<Preferences>();
+  return {
+    Authorization: `Bearer ${apiToken}`,
+    "Content-Type": "application/json",
   };
 }
