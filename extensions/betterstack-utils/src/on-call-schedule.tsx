@@ -124,7 +124,7 @@ export default function Command() {
         <ActionPanel>
           <Action title={`Show ${TIME_RANGE_LABELS[nextTimeRange]}`} onAction={() => setTimeRange(nextTimeRange)} />
           <Action
-            title="Copy Schedule as PNG"
+            title="Copy Schedule to Clipboard"
             shortcut={{ modifiers: ["cmd", "shift"], key: "c" }}
             onAction={copyAsPng}
           />
