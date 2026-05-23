@@ -1,8 +1,10 @@
-import { Action, ActionPanel, Detail, showToast, Toast } from "@raycast/api";
+import { Action, ActionPanel, Detail, environment, showToast, Toast } from "@raycast/api";
 import { useEffect, useState } from "react";
+import { promises as fs } from "node:fs";
+import path from "node:path";
 import { getOnCallCalendars, getCalendarEvents } from "./api";
-import { getCurrentMonthWindow, getThreeMonthWindow, type OnCallEvent } from "./dates";
-import { buildCombinedScheduleSvg, toSvgDataUri } from "./schedule-svg";
+import { getCurrentMonthWindow, getThreeMonthWindow, getOnCallForDay, type OnCallEvent } from "./dates";
+import { buildCombinedScheduleSvg, copyImageToClipboard, svgToPng, toSvgDataUri } from "./schedule-svg";
 
 type TimeRange = "current-month" | "3-months";
 
@@ -75,11 +77,43 @@ export default function Command() {
     ? events.filter((e) => `${e.user.first_name} ${e.user.last_name}`.trim() === selectedUser)
     : events;
 
+  async function copyAsPng() {
+    const toast = await showToast({ style: Toast.Style.Animated, title: "Copying to clipboard…" });
+    try {
+      const svg = buildCombinedScheduleSvg(filteredEvents, today, window, "#1F2433", false);
+      const svgPath = path.join(environment.supportPath, "schedule.svg");
+      const pngPath = path.join(environment.supportPath, "schedule.png");
+      await fs.writeFile(svgPath, svg);
+      await svgToPng(svgPath, pngPath);
+      await copyImageToClipboard(pngPath);
+      toast.style = Toast.Style.Success;
+      toast.title = "Schedule copied";
+      fs.unlink(svgPath).catch(() => {});
+      fs.unlink(pngPath).catch(() => {});
+    } catch (error) {
+      toast.style = Toast.Style.Failure;
+      toast.title = "Failed to copy schedule";
+      toast.message = error instanceof Error ? error.message : String(error);
+    }
+  }
+
   const nextTimeRange: TimeRange = timeRange === "current-month" ? "3-months" : "current-month";
   const window = timeRange === "current-month" ? getCurrentMonthWindow() : getThreeMonthWindow();
+
+  const currentOnCall = isLoading ? null : getOnCallForDay(today, events);
+  const currentlyOnCallMessage =
+    timeRange === "current-month" && currentOnCall
+      ? [
+          "",
+          `**Currently on call:** ${currentOnCall.first_name} ${currentOnCall.last_name}`.trim(),
+          `**${currentOnCall.email}**`,
+        ].join("\n")
+      : "";
+
   const markdown = isLoading
     ? ""
-    : `![schedule](${toSvgDataUri(buildCombinedScheduleSvg(filteredEvents, today, window))})`;
+    : `![schedule](${toSvgDataUri(buildCombinedScheduleSvg(filteredEvents, today, window))})\n` +
+      currentlyOnCallMessage;
 
   return (
     <Detail
@@ -89,6 +123,11 @@ export default function Command() {
       actions={
         <ActionPanel>
           <Action title={`Show ${TIME_RANGE_LABELS[nextTimeRange]}`} onAction={() => setTimeRange(nextTimeRange)} />
+          <Action
+            title="Copy Schedule as PNG"
+            shortcut={{ modifiers: ["cmd", "shift"], key: "c" }}
+            onAction={copyAsPng}
+          />
           {userNames.length > 0 && (
             <ActionPanel.Submenu
               title={selectedUser ? `Filter: ${selectedUser}` : "Filter by User"}
