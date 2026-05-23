@@ -6,7 +6,7 @@ export const Colors = {
   ORANGE: "#FF8738",
   INDIGO: "#7F88FF",
   YELLOW: "#E7B84A",
-  DARK: "#1A2235",
+  DARK: "#1F2433",
   WHITE: "#FFFFFF",
 };
 
