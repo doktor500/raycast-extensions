@@ -15,19 +15,15 @@ export function getCurrentMonthWindow(): { start: Date; end: Date } {
   return { start, end };
 }
 
-export function getThreeMonthWindow(): { start: Date; end: Date; months: Date[] } {
+export function getThreeMonthWindow(): { start: Date; end: Date } {
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth();
 
-  const prev = new Date(year, month - 1, 1);
-  const curr = new Date(year, month, 1);
-  const next = new Date(year, month + 1, 1);
-
-  const start = prev;
+  const start = new Date(year, month - 1, 1);
   const end = new Date(year, month + 2, 0);
 
-  return { start, end, months: [prev, curr, next] };
+  return { start, end };
 }
 
 export function getOnCallForDay(date: Date, events: OnCallEvent[]): OnCallEvent["user"] | null {

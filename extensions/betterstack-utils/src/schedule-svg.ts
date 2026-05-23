@@ -305,50 +305,6 @@ const SUMMARY_BLOCK_HEIGHT = 100;
 const SUMMARY_MONTH_COL_WIDTH = 200;
 const SUMMARY_GAP = 12;
 
-export function buildSummarySvg(events: OnCallEvent[], today: Date, window: { start: Date; end: Date }): string {
-  const monthGroups = getMonthsInWindow(window);
-
-  const uniqueNames = [
-    ...new Set(
-      events.map((e) => {
-        const fullName = `${e.user.first_name} ${e.user.last_name}`.trim();
-        return fullName || e.user.email;
-      }),
-    ),
-  ].sort();
-  const colorMap = buildColorMap(uniqueNames);
-
-  const totalHeight = monthGroups.length * SUMMARY_BLOCK_HEIGHT + (monthGroups.length - 1) * SUMMARY_GAP;
-
-  let currentY = 0;
-  const blocks = monthGroups
-    .map(({ year, month }) => {
-      const summary = computeMonthSummary(year, month, events, colorMap, today);
-      const block = renderSummaryBlock(year, month, summary, currentY);
-      currentY += SUMMARY_BLOCK_HEIGHT + SUMMARY_GAP;
-      return block;
-    })
-    .join("");
-
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${totalHeight}" viewBox="0 0 ${WIDTH} ${totalHeight}">${blocks}</svg>`;
-}
-
-function getMonthsInWindow(window: { start: Date; end: Date }): Array<{ year: number; month: number }> {
-  const seen = new Set<string>();
-  const list: Array<{ year: number; month: number }> = [];
-  const cur = new Date(window.start.getFullYear(), window.start.getMonth(), 1);
-  const end = new Date(window.end.getFullYear(), window.end.getMonth(), 1);
-  while (cur <= end) {
-    const key = `${cur.getFullYear()}-${cur.getMonth()}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      list.push({ year: cur.getFullYear(), month: cur.getMonth() });
-    }
-    cur.setMonth(cur.getMonth() + 1);
-  }
-  return list;
-}
-
 function computeMonthSummary(
   year: number,
   month: number,
