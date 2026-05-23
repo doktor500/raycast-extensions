@@ -39,3 +39,26 @@ export function getOnCallForDay(date: Date, events: OnCallEvent[]): OnCallEvent[
 
   return null;
 }
+
+export function getOnCallUsersForDay(date: Date, events: OnCallEvent[]): OnCallEvent["user"][] {
+  const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+  const dayEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 0, 0, 0);
+  const MIN_OVERLAP_MS = 4 * 3600 * 1000; // must cover at least 4 hours of the day
+  const users: OnCallEvent["user"][] = [];
+  const seen = new Set<string>();
+
+  for (const event of events) {
+    const start = new Date(event.started_at);
+    const end = new Date(event.ended_at);
+    const overlapMs = Math.min(end.getTime(), dayEnd.getTime()) - Math.max(start.getTime(), dayStart.getTime());
+    if (overlapMs >= MIN_OVERLAP_MS) {
+      const key = event.user.email;
+      if (!seen.has(key)) {
+        seen.add(key);
+        users.push(event.user);
+      }
+    }
+  }
+
+  return users;
+}
