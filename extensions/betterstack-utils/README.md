@@ -1,8 +1,8 @@
 # BetterStack Utils
 
-View your BetterStack on-call schedule directly from Raycast.
+View your BetterStack on-call primary schedule directly from Raycast.
 
-![betterstack.png](docs/betterstack.png)
+![betterstack.png](docs/betterstack-oncall.png)
 
 ## Setup
 
