@@ -364,12 +364,12 @@ function renderSummaryBlock(year: number, month: number, summary: SummaryEntry[]
   const midY = SUMMARY_BLOCK_HEIGHT / 2;
 
   const items = summary
-    .map(({ name, days, color }, i) => {
+    .map(({ name, days, remainingHours, color }, i) => {
       const cellX = SUMMARY_MONTH_COL_WIDTH + i * cellWidth;
       const dotCx = cellX + 20;
       const textX = dotCx + dotR + 10;
       const label = escapeXml(name);
-      const stats = escapeXml(`${days}d`);
+      const stats = escapeXml(remainingHours > 0 ? `${days}d · ${remainingHours}h left` : `${days}d`);
       return `<circle cx="${dotCx}" cy="${midY - 10}" r="${dotR}" fill="${color}"/>
     <text x="${textX}" y="${midY - 3}" fill="#AEB8D3" font-family="${FONT}" font-size="19" font-weight="600">${label}</text>
     <text x="${textX}" y="${midY + 20}" fill="#707B96" font-family="${FONT}" font-size="16">${stats}</text>`;

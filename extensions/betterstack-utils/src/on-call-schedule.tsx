@@ -80,7 +80,7 @@ export default function Command() {
   async function copyAsPng() {
     const toast = await showToast({ style: Toast.Style.Animated, title: "Copying to clipboard…" });
     try {
-      const svg = buildCombinedScheduleSvg(filteredEvents, today, window, "#1F2433", false, events);
+      const svg = buildCombinedScheduleSvg(filteredEvents, today, scheduleWindow, "#1F2433", false, events);
       const svgPath = path.join(environment.supportPath, "schedule.svg");
       const pngPath = path.join(environment.supportPath, "schedule.png");
       await fs.writeFile(svgPath, svg);
@@ -98,7 +98,7 @@ export default function Command() {
   }
 
   const nextTimeRange: TimeRange = timeRange === "current-month" ? "3-months" : "current-month";
-  const window = timeRange === "current-month" ? getCurrentMonthWindow() : getThreeMonthWindow();
+  const scheduleWindow = timeRange === "current-month" ? getCurrentMonthWindow() : getThreeMonthWindow();
 
   const currentOnCall = isLoading ? null : getOnCallForDay(today, events);
   const currentlyOnCallMessage =
@@ -112,7 +112,7 @@ export default function Command() {
 
   const markdown = isLoading
     ? ""
-    : `![schedule](${toSvgDataUri(buildCombinedScheduleSvg(filteredEvents, today, window, undefined, true, events))})\n` +
+    : `![schedule](${toSvgDataUri(buildCombinedScheduleSvg(filteredEvents, today, scheduleWindow, undefined, true, events))})\n` +
       currentlyOnCallMessage;
 
   return (
