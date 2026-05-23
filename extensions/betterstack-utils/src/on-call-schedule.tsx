@@ -80,7 +80,7 @@ export default function Command() {
   async function copyAsPng() {
     const toast = await showToast({ style: Toast.Style.Animated, title: "Copying to clipboard…" });
     try {
-      const svg = buildCombinedScheduleSvg(filteredEvents, today, window, "#1F2433", false);
+      const svg = buildCombinedScheduleSvg(filteredEvents, today, window, "#1F2433", false, events);
       const svgPath = path.join(environment.supportPath, "schedule.svg");
       const pngPath = path.join(environment.supportPath, "schedule.png");
       await fs.writeFile(svgPath, svg);
@@ -112,7 +112,7 @@ export default function Command() {
 
   const markdown = isLoading
     ? ""
-    : `![schedule](${toSvgDataUri(buildCombinedScheduleSvg(filteredEvents, today, window))})\n` +
+    : `![schedule](${toSvgDataUri(buildCombinedScheduleSvg(filteredEvents, today, window, undefined, true, events))})\n` +
       currentlyOnCallMessage;
 
   return (

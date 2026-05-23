@@ -25,6 +25,7 @@ export function buildCombinedScheduleSvg(
   window: { start: Date; end: Date },
   backgroundColor?: string,
   showTodayMarker = true,
+  allEvents?: OnCallEvent[],
 ): string {
   const { start, end } = window;
   const firstWeekStart = startOfWeek(start);
@@ -62,9 +63,10 @@ export function buildCombinedScheduleSvg(
   const totalHeight =
     monthGroups.reduce((sum, g) => sum + monthTotalHeight(g), 0) + (monthGroups.length - 1) * BLOCK_GAP;
 
+  const colorSourceEvents = allEvents ?? events;
   const uniqueNames = [
     ...new Set(
-      events.map((e) => {
+      colorSourceEvents.map((e) => {
         const fullName = `${e.user.first_name} ${e.user.last_name}`.trim();
         return fullName || e.user.email;
       }),
