@@ -1,7 +1,7 @@
 import { Action, ActionPanel, Detail, environment, showToast, Toast } from "@raycast/api";
 import { useState } from "react";
 import { getCurrentMonthWindow, getThreeMonthWindow } from "./utils/dates";
-import { buildCombinedScheduleSvg, exportSvgToClipboard, toSvgDataUri } from "./svg/schedule-svg";
+import { buildCombinedScheduleSvg, exportSvgToClipboard, toSvgDataUri } from "./ui/schedule-svg";
 import { useOnCallData } from "./hooks/use-on-call-data";
 import { formatUserName, getCurrentOnCallUser } from "./domain/on-call-event";
 

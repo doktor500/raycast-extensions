@@ -18,7 +18,7 @@ import {
   formatMonthLabel,
   buildWeekSpanBars,
   computeMonthSummary,
-} from "./layout-svg";
+} from "./layout";
 import { formatUserName, OnCallEvent } from "../domain/on-call-event";
 
 export function buildCombinedScheduleSvg(
@@ -180,7 +180,7 @@ function renderWeekGroup(
   const divider = weekIndex > 0 ? `<line x1="0" y1="0" x2="${LAYOUT.WIDTH}" y2="0" stroke="#303A50"/>` : "";
 
   const baseId = (currentMonth.year * 12 + currentMonth.month) * 1000 + weekIndex * 100;
-  const allBarsMarkup = weekTimeline.map((bar, barIdx) => renderSpanBar(bar, baseId + barIdx)).join("\n    ");
+  const allBarsMarkup = weekTimeline.map((bar, barIndex) => renderSpanBar(bar, baseId + barIndex)).join("\n    ");
 
   return `<g transform="translate(0, ${offsetY})">
     ${divider}
@@ -218,13 +218,13 @@ function renderDayColumn(
       <line x1="${x}" y1="0" x2="${x}" y2="${rowH}" stroke="#2A3449"/>
       <line x1="${x}" y1="${LAYOUT.DAY_HEADER_HEIGHT}" x2="${x + LAYOUT.DAY_WIDTH}" y2="${LAYOUT.DAY_HEADER_HEIGHT}" stroke="#2D374C"/>
       <text x="${center - 3}" y="22" text-anchor="end" fill="#707B96" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="13" font-weight="600">${formatWeekday(day)}</text>
-      <text x="${center + 3}" y="22" text-anchor="start" fill="#AEB8D3" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="16" font-weight="650">${day.getDate()}</text>
+      <text x="${center + 3}" y="22" text-anchor="start" fill="#AEB8D3" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="16" font-weight="600">${day.getDate()}</text>
     </g>`;
 }
 
 function renderSpanBar(bar: WeekSpanBar, clipId: number): string {
-  const leftX = bar.startDayIdx * LAYOUT.DAY_WIDTH + bar.startFrac * LAYOUT.DAY_WIDTH;
-  const rightX = bar.endDayIdx * LAYOUT.DAY_WIDTH + bar.endFrac * LAYOUT.DAY_WIDTH;
+  const leftX = bar.startDayIndex * LAYOUT.DAY_WIDTH + bar.startFraction * LAYOUT.DAY_WIDTH;
+  const rightX = bar.endDayIndex * LAYOUT.DAY_WIDTH + bar.endFraction * LAYOUT.DAY_WIDTH;
   const barX = leftX + LAYOUT.H_GAP;
   const barWidth = Math.max(rightX - leftX - 2 * LAYOUT.H_GAP, 2);
   const barY = LAYOUT.ROW_TOP + bar.lane * (LAYOUT.ROW_HEIGHT + LAYOUT.BAR_GAP);
@@ -241,7 +241,7 @@ function renderSpanBar(bar: WeekSpanBar, clipId: number): string {
       </clipPath>
       <rect x="${barX}" y="${barY}" width="${barWidth}" height="${LAYOUT.ROW_HEIGHT}" rx="${rx}" fill="${bar.color}" filter="url(#shadow)"/>
       <rect x="${barX + 1}" y="${barY + 1}" width="${barWidth - 2}" height="${LAYOUT.ROW_HEIGHT - 2}" rx="${Math.max(rx - 1, 0)}" fill="none" stroke="${textColor}" stroke-opacity="0.16"/>
-      ${label ? `<text x="${barX + 12}" y="${barY + 27}" clip-path="url(#${id})" fill="${textColor}" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="${fontSize}" font-weight="650" text-rendering="geometricPrecision">${label}</text>` : ""}
+      ${label ? `<text x="${barX + 12}" y="${barY + 27}" clip-path="url(#${id})" fill="${textColor}" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="${fontSize}" font-weight="600" text-rendering="geometricPrecision">${label}</text>` : ""}
     </g>`;
 }
 

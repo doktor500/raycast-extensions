@@ -1,6 +1,6 @@
 import { showToast, Toast } from "@raycast/api";
 import { useEffect, useState } from "react";
-import { getOnCallCalendars, getCalendarEvents } from "../api/betterstak-api";
+import { getOnCallCalendars, getCalendarEvents } from "../api/betterstack-api";
 import { getThreeMonthWindow } from "../utils/dates";
 import { OnCallEvent } from "../domain/on-call-event";
 

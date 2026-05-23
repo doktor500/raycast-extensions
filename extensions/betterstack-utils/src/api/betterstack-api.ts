@@ -52,19 +52,30 @@ interface BetterStackEvent {
 
 interface EventsResponse {
   events: BetterStackEvent[];
+  pagination?: {
+    next?: string | null;
+  };
 }
 
 export async function getOnCallCalendars(): Promise<Calendar[]> {
-  const response = await fetchAllPages<Calendar>(`${BASE_URL}/on-calls`);
+  const { data } = await fetchAllPages<Calendar>(`${BASE_URL}/on-calls`);
 
-  return response.data;
+  return data;
 }
 
 export async function getCalendarEvents(calendarId: string, from: Date, to: Date): Promise<CalendarEvent[]> {
   const params = new URLSearchParams({ from: from.toISOString(), to: to.toISOString() });
-  const response = await fetchJson<EventsResponse>(`${BASE_URL}/on-calls/${calendarId}/events?${params}`);
 
-  return response.events.flatMap((event) => {
+  let url: string | null | undefined = `${BASE_URL}/on-calls/${calendarId}/events?${params}`;
+  const allEvents: BetterStackEvent[] = [];
+
+  while (url) {
+    const page: EventsResponse = await fetchJson<EventsResponse>(url);
+    allEvents.push(...page.events);
+    url = page.pagination?.next;
+  }
+
+  return allEvents.flatMap((event) => {
     const startsAt = new Date(event.starts_at);
     const endsAt = new Date(event.ends_at);
 
@@ -84,22 +95,21 @@ export async function getCalendarEvents(calendarId: string, from: Date, to: Date
 }
 
 async function fetchAllPages<T>(url: string): Promise<ApiResponse<T>> {
-  const fetch = async (currentUrl: string, acc: ApiResponse<T>): Promise<ApiResponse<T>> => {
+  let currentUrl: string | null | undefined = url;
+  const result: ApiResponse<T> = { data: [], included: [] };
+
+  while (currentUrl) {
     const json: ApiResponse<T> = await fetchJson<ApiResponse<T>>(currentUrl);
-    const response: ApiResponse<T> = {
-      data: [...acc.data, ...json.data],
-      included: [...(acc.included ?? []), ...(json.included ?? [])],
-    };
+    result.data.push(...json.data);
+    result.included = [...(result.included ?? []), ...(json.included ?? [])];
+    currentUrl = json.pagination?.next;
+  }
 
-    const nextPage = json.pagination?.next;
-    return nextPage ? fetch(nextPage, response) : response;
-  };
-
-  return fetch(url, { data: [], included: [] });
+  return result;
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url, { headers: getHeaders() });
+  const response: Response = await fetch(url, { headers: getHeaders() });
   if (!response.ok) {
     if (response.status === 401) {
       throw new Error("Invalid API token. Check your BetterStack API token in extension preferences.");
