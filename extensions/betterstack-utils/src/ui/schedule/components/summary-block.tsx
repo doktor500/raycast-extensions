@@ -23,6 +23,13 @@ interface VerticalItemsProps {
   summary: SummaryEntry[];
 }
 
+function truncateName(name: string, availableWidth: number): string {
+  const maxChars = Math.floor(availableWidth / 10);
+  if (name.length <= maxChars) return name;
+
+  return name.slice(0, Math.max(1, maxChars - 1)) + "…";
+}
+
 function HorizontalSummaryItems({ summary, midY }: HorizontalItemsProps) {
   const statsAreaWidth = LAYOUT.WIDTH - SUMMARY.MONTH_COL_WIDTH;
   const cellWidth = statsAreaWidth / summary.length;
@@ -34,11 +41,12 @@ function HorizontalSummaryItems({ summary, midY }: HorizontalItemsProps) {
         const cellX = SUMMARY.MONTH_COL_WIDTH + index * cellWidth;
         const dotCx = cellX + 20;
         const textX = dotCx + dotRadius + 10;
+        const availableWidth = cellWidth - (textX - cellX) - 10;
         return (
           <g key={index}>
             <circle cx={dotCx} cy={midY - 10} r={dotRadius} fill={color} />
             <text x={textX} y={midY - 3} fill="#AEB8D3" fontFamily={SUMMARY.FONT} fontSize={19} fontWeight={600}>
-              {name}
+              {truncateName(name, availableWidth)}
             </text>
             <text x={textX} y={midY + 20} fill="#707B96" fontFamily={SUMMARY.FONT} fontSize={16}>
               {formatDaysHours(hours)}
