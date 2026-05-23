@@ -1,5 +1,5 @@
 # betterstack-utils Changelog
 
-## [Initial Version] - {PR_MERGE_DATE}
+## [Initial version] - {PR_MERGE_DATE}
 
-- Initial version of the extension
+- Initial version of the better stack utils raycast extension
