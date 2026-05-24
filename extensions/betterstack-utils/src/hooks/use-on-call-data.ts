@@ -9,6 +9,7 @@ export interface OnCallData {
   scheduleName: string;
   isLoading: boolean;
   noSchedule: boolean;
+  hasError: boolean;
 }
 
 export function useOnCallData(): OnCallData {
@@ -16,6 +17,7 @@ export function useOnCallData(): OnCallData {
   const [events, setEvents] = useState<OnCallEvent[]>([]);
   const [scheduleName, setScheduleName] = useState("");
   const [noSchedule, setNoSchedule] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -45,6 +47,7 @@ export function useOnCallData(): OnCallData {
           })),
         );
       } catch (error) {
+        setHasError(true);
         void showToast({
           style: Toast.Style.Failure,
           title: "Failed to load on-call schedule",
@@ -57,5 +60,5 @@ export function useOnCallData(): OnCallData {
     void load();
   }, []);
 
-  return { events, scheduleName, isLoading, noSchedule };
+  return { events, scheduleName, isLoading, noSchedule, hasError };
 }

@@ -35,13 +35,23 @@ const TIME_RANGE_LABELS: Record<TimeRange, string> = {
 };
 
 export default function Command() {
-  const { events, scheduleName, isLoading, noSchedule } = useOnCallData();
+  const { events, scheduleName, isLoading, noSchedule, hasError } = useOnCallData();
   const [timeRange, setTimeRange] = useState<TimeRange>("month");
   const [selectedUser, setSelectedUser] = useState<string>("");
   const [monthOffset, setMonthOffset] = useState<number>(0);
   const [weekOffset, setWeekOffset] = useState<number>(0);
 
   const today = new Date();
+
+  if (hasError) {
+    return (
+      <Detail
+        markdown={
+          "## Failed to load on-call schedule\n\nCheck your API token and network connection, then reopen the extension."
+        }
+      />
+    );
+  }
 
   if (noSchedule) {
     return <NoScheduleDetail />;
