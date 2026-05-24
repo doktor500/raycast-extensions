@@ -1,5 +1,5 @@
 import { LAYOUT } from "../../../layout";
-import { skeletonColors } from "../colors/skeleton-colors";
+import { SKELETON_COLOR } from "../colors/skeleton-colors";
 
 interface WeekRowProps {
   weekIndex: number;
@@ -12,22 +12,21 @@ export function WeekRow({ weekIndex, spans, rowHeight }: WeekRowProps) {
 
   return (
     <>
-      {weekIndex > 0 && <line x1={0} y1={offsetY} x2={LAYOUT.WIDTH} y2={offsetY} stroke={skeletonColors.border} />}
+      {weekIndex > 0 && <line x1={0} y1={offsetY} x2={LAYOUT.WIDTH} y2={offsetY} stroke={SKELETON_COLOR} />}
       {Array.from({ length: 7 }, (_, dayIndex) => {
         const x = dayIndex * LAYOUT.DAY_WIDTH;
         const center = x + LAYOUT.DAY_WIDTH / 2;
         return (
           <g key={dayIndex}>
-            <line x1={x} y1={offsetY} x2={x} y2={offsetY + rowHeight} stroke={skeletonColors.dayDivider} />
+            <line x1={x} y1={offsetY} x2={x} y2={offsetY + rowHeight} stroke={SKELETON_COLOR} />
             <line
               x1={x}
               y1={offsetY + LAYOUT.DAY_HEADER_HEIGHT}
               x2={x + LAYOUT.DAY_WIDTH}
               y2={offsetY + LAYOUT.DAY_HEADER_HEIGHT}
-              stroke={skeletonColors.headerDivider}
+              stroke={SKELETON_COLOR}
             />
-            <rect x={center - 24} y={offsetY + 7} width={20} height={11} fill={skeletonColors.placeholder} rx={2} />
-            <rect x={center - 1} y={offsetY + 5} width={16} height={15} fill={skeletonColors.dayHighlight} rx={2} />
+            <rect x={center - 24} y={offsetY + 5} width={39} height={15} fill={SKELETON_COLOR} rx={2} />
           </g>
         );
       })}
@@ -43,7 +42,7 @@ export function WeekRow({ weekIndex, spans, rowHeight }: WeekRowProps) {
             width={barWidth}
             height={LAYOUT.ROW_HEIGHT}
             rx={6}
-            fill={skeletonColors.bar}
+            fill={SKELETON_COLOR}
           />
         );
       })}
