@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { getCurrentWeekDays, isSameDay } from "../../../common/dates";
 import { buildColorMap, Colors, getTextColor, RotaColors } from "../../../common/colors";
 import { formatUserName, OnCallEvent } from "../../../domain/on-call-event";
-import { escapeXml, formatWeekday, truncateLabel } from "../../layout";
+import { formatWeekday, truncateLabel } from "../../layout";
 import { FONT_FAMILY, MONO_FONT_FAMILY } from "../../../common/font";
 import { ON_CALL_PILL_CIRC_R, OnCallPill } from "./on-call-pill";
 
@@ -174,7 +174,7 @@ function WeekViewSvg({
               <rect x={colX} y={y} width={colWidth} height={height} fill={seg.color} rx={3} />
               {showName && (
                 <text x={colX + 12} y={y + 20} fontSize={16} fontWeight={600} fill={textColor} fontFamily={WEEK.FONT}>
-                  {escapeXml(truncateLabel(seg.label, colWidth - 22, 16))}
+                  {truncateLabel(seg.label, colWidth - 22, 16)}
                 </text>
               )}
             </Fragment>

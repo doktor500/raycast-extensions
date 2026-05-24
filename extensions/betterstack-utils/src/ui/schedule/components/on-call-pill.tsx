@@ -1,6 +1,5 @@
 import { getTextColor, Colors, RotaColors } from "../../../common/colors";
 import { FONT_FAMILY } from "../../../common/font";
-import { escapeXml } from "../../layout";
 
 export const ON_CALL_PILL_CIRC_R = 16;
 const CX = ON_CALL_PILL_CIRC_R;
@@ -42,7 +41,7 @@ export function OnCallPill({ cy, name, color }: OnCallPillProps) {
         {initial}
       </text>
       <text x={textX} y={cy} dy="0.35em" fontSize={17} fontWeight={500} fill={Colors.WHITE} fontFamily={FONT_FAMILY}>
-        {escapeXml(`${name} is on-call`)}
+        {`${name} is on-call`}
       </text>
     </g>
   );

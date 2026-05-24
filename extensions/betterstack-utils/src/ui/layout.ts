@@ -76,15 +76,6 @@ export function truncateLabel(label: string, availableWidth: number, fontSize: n
   return label.slice(0, Math.max(maxChars - 1, 1)) + "…";
 }
 
-export function escapeXml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
-}
-
 export function formatWeekday(date: Date): string {
   return date.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
 }
