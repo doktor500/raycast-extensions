@@ -1,7 +1,7 @@
 import { showToast, Toast } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { getOnCallCalendars, getCalendarEvents } from "../api/betterstack-api";
-import { getThreeMonthWindow } from "../utils/dates";
+import { getCurrentMonthWindow } from "../common/dates";
 import { OnCallEvent } from "../domain/on-call-event";
 
 export interface OnCallData {
@@ -33,7 +33,8 @@ export function useOnCallData(): OnCallData {
 
         setScheduleName(primary.attributes.name ?? "Primary");
 
-        const { start, end } = getThreeMonthWindow();
+        const { start } = getCurrentMonthWindow(-6);
+        const { end } = getCurrentMonthWindow(6);
         const calEvents = await getCalendarEvents(primary.id, start, end);
 
         setEvents(

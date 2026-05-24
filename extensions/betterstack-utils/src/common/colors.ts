@@ -1,4 +1,4 @@
-export const Colors = {
+export const RotaColors = {
   GREEN: "#16C77A",
   RED: "#FF5E7A",
   BLUE: "#21A7FF",
@@ -6,11 +6,34 @@ export const Colors = {
   ORANGE: "#FF8738",
   INDIGO: "#7F88FF",
   YELLOW: "#E7B84A",
-  DARK: "#1F2433",
-  WHITE: "#FFFFFF",
 };
 
-const SVG_PALETTE = [Colors.GREEN, Colors.RED, Colors.BLUE, Colors.PURPLE, Colors.ORANGE, Colors.INDIGO, Colors.YELLOW];
+export const Colors = {
+  DARK: "#1F2433",
+  WHITE: "#FFFFFF",
+  VOID: "#050816",
+  DEEP_DARK: "#0B0C15",
+  NAVY: "#182033",
+  DIVIDER: "#2A3449",
+  HEADER_LINE: "#2D374C",
+  GRID: "#2D3748",
+  BORDER: "#303A50",
+  SEPARATOR: "#4A5568",
+  MUTED: "#707B96",
+  DIM: "#718096",
+  SUBTLE: "#AEB8D3",
+  FROST: "#F3F5FA",
+};
+
+const SVG_PALETTE = [
+  RotaColors.GREEN,
+  RotaColors.RED,
+  RotaColors.BLUE,
+  RotaColors.PURPLE,
+  RotaColors.ORANGE,
+  RotaColors.INDIGO,
+  RotaColors.YELLOW,
+];
 
 export function buildColorMap(names: string[]): Map<string, string> {
   return new Map(names.map((name, index) => [name, SVG_PALETTE[index % SVG_PALETTE.length]]));

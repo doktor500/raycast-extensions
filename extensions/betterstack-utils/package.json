@@ -29,6 +29,7 @@
   "dependencies": {
     "@raycast/api": "^1.104.18",
     "luxon": "^3.7.2",
+    "react": "19.2.1",
     "react-dom": "19.2.1"
   },
   "devDependencies": {
@@ -46,6 +47,7 @@
     "dev": "ray develop",
     "lint": "ray lint",
     "fix-lint": "ray lint --fix",
-    "publish": "npx @raycast/api@latest publish"
+    "publish": "npx @raycast/api@latest publish",
+    "ts:check": "tsc --noEmit"
   }
 }

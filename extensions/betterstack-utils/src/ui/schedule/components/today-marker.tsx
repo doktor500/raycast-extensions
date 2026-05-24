@@ -1,3 +1,4 @@
+import { Colors } from "../../../common/colors";
 import { LAYOUT } from "../../layout";
 
 interface TodayMarkerProps {
@@ -17,11 +18,11 @@ export function TodayMarker({ index, today, rowHeight }: TodayMarkerProps) {
         y1={LAYOUT.DAY_HEADER_HEIGHT}
         x2={x}
         y2={rowHeight}
-        stroke="#FFFFFF"
+        stroke={Colors.WHITE}
         strokeWidth={4}
         opacity={0.85}
       />
-      <circle cx={x} cy={LAYOUT.DAY_HEADER_HEIGHT} r={3} fill="#FFFFFF" />
+      <circle cx={x} cy={LAYOUT.DAY_HEADER_HEIGHT} r={3} fill={Colors.WHITE} />
     </g>
   );
 }

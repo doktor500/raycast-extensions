@@ -1,5 +1,6 @@
 import { type WeekSpanBar, LAYOUT } from "../../layout";
-import { isSameDay } from "../../../utils/dates";
+import { isSameDay } from "../../../common/dates";
+import { Colors } from "../../../common/colors";
 import { DayColumn } from "./day-column";
 import { SpanBar } from "./span-bar";
 import { TodayMarker } from "./today-marker";
@@ -33,7 +34,7 @@ export function WeekGroup({
 
   return (
     <g transform={`translate(0, ${offsetY})`}>
-      {weekIndex > 0 && <line x1={0} y1={0} x2={LAYOUT.WIDTH} y2={0} stroke="#303A50" />}
+      {weekIndex > 0 && <line x1={0} y1={0} x2={LAYOUT.WIDTH} y2={0} stroke={Colors.BORDER} />}
       {days.map((day, index) => (
         <DayColumn
           key={index}

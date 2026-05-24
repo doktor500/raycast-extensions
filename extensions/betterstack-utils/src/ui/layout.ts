@@ -1,5 +1,6 @@
 import { formatUserName, OnCallEvent } from "../domain/on-call-event";
-import { Colors } from "../utils/colors";
+import { RotaColors } from "../common/colors";
+import { FONT_FAMILY } from "../common/font";
 
 export interface WeekSpanBar {
   startDayIndex: number;
@@ -35,10 +36,12 @@ export const LAYOUT = {
   H_GAP: 3,
   DAY_MS: 24 * 3600 * 1000,
   SUMMARY_GAP: 12,
+  PILL_GAP: 36,
+  ON_CALL_PILL_TOP_PADDING: 544,
 } as const;
 
 export const SUMMARY = {
-  FONT: "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+  FONT: FONT_FAMILY,
   BLOCK_HEIGHT: 100,
   MONTH_COL_WIDTH: 200,
   COLS_THRESHOLD: 5,
@@ -53,8 +56,6 @@ export function weekRowHeight(maxLanes: number): number {
 }
 
 export function summaryBlockHeight(entryCount: number): number {
-  if (entryCount <= SUMMARY.COLS_THRESHOLD) return SUMMARY.BLOCK_HEIGHT;
-
   return entryCount * SUMMARY.VERTICAL_ROW_HEIGHT + SUMMARY.VERTICAL_PADDING * 2;
 }
 
@@ -134,7 +135,7 @@ export function computeMonthSummary(
   const hoursByName = accumulateEventHours(events, monthStart, monthEnd);
 
   return [...hoursByName.entries()]
-    .map(([name, hours]) => ({ name, hours, color: colorMap.get(name) ?? Colors.GREEN }))
+    .map(([name, hours]) => ({ name, hours, color: colorMap.get(name) ?? RotaColors.GREEN }))
     .sort((a, b) => b.hours - a.hours);
 }
 
@@ -199,7 +200,14 @@ function eventToLanedBar(
   const { dayIndex: startDayIndex, fraction: startFraction } = findStartPosition(overlap.start, dayStarts, first, last);
   const { dayIndex: endDayIndex, fraction: endFraction } = findEndPosition(overlap.end, dayStarts, first, last);
 
-  return { startDayIndex, startFraction, endDayIndex, endFraction, label, color: colorMap.get(label) ?? Colors.GREEN };
+  return {
+    startDayIndex,
+    startFraction,
+    endDayIndex,
+    endFraction,
+    label,
+    color: colorMap.get(label) ?? RotaColors.GREEN,
+  };
 }
 
 function assignSpanLanes(bars: Omit<WeekSpanBar, "lane">[]): WeekSpanBar[] {

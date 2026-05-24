@@ -4,12 +4,13 @@ import { promises as fs } from "node:fs";
 import { promisify } from "node:util";
 import path from "node:path";
 import { Fragment } from "react";
-import { startOfWeek, addDays } from "../../utils/dates";
-import { buildColorMap } from "../../utils/colors";
-import { LAYOUT, weekRowHeight, summaryBlockHeight, buildWeekSpanBars, computeMonthSummary } from "../layout";
+import { addDays, startOfWeek } from "../../common/dates";
+import { buildColorMap, Colors, RotaColors } from "../../common/colors";
+import { buildWeekSpanBars, computeMonthSummary, LAYOUT, summaryBlockHeight, weekRowHeight } from "../layout";
 import { formatUserName, OnCallEvent } from "../../domain/on-call-event";
 import { MonthBlock } from "./components/month-block";
 import { SummaryBlock } from "./components/summary-block";
+import { ON_CALL_PILL_CIRC_R, OnCallPill } from "./components/on-call-pill";
 
 type Props = {
   events: OnCallEvent[];
@@ -17,10 +18,35 @@ type Props = {
   window: { start: Date; end: Date };
   backgroundColor?: string;
   showTodayMarker?: boolean;
+  showOnCallPill?: boolean;
   allEvents?: OnCallEvent[];
 };
 
-function CombinedScheduleSvg({ events, today, window, backgroundColor, showTodayMarker = true, allEvents }: Props) {
+const ON_CALL_PILL_BANNER = ON_CALL_PILL_CIRC_R * 2;
+
+function findOnCallAtTime(
+  date: Date,
+  events: OnCallEvent[],
+  colorMap: Map<string, string>,
+): { name: string; color: string } | null {
+  const dateMs = date.getTime();
+  const event = events.find(
+    (e) => new Date(e.started_at).getTime() <= dateMs && new Date(e.ended_at).getTime() > dateMs,
+  );
+  if (!event) return null;
+  const name = formatUserName(event.user);
+  return { name, color: colorMap.get(name) ?? RotaColors.GREEN };
+}
+
+function CombinedScheduleSvg({
+  events,
+  today,
+  window,
+  backgroundColor,
+  showTodayMarker = true,
+  showOnCallPill = true,
+  allEvents,
+}: Props) {
   const { start, end } = window;
   const firstWeekStart = startOfWeek(start);
   const lastWeekStart = startOfWeek(end);
@@ -70,16 +96,25 @@ function CombinedScheduleSvg({ events, today, window, backgroundColor, showToday
 
   const summaries = monthGroups.map(({ year, month }) => computeMonthSummary(year, month, events, colorMap));
 
+  const monthOnCall = monthGroups.map(() => {
+    if (!showOnCallPill) return null;
+    return findOnCallAtTime(today, events, colorMap);
+  });
+
+  const currentMonthOnCall = monthOnCall.find((m) => m !== null) ?? null;
+  const topBannerHeight = currentMonthOnCall ? ON_CALL_PILL_BANNER : 0;
+
   const monthTotalHeight = (monthIndex: number) =>
     calendarHeight(monthIndex) + LAYOUT.SUMMARY_GAP + summaryBlockHeight(summaries[monthIndex].length);
 
   const totalHeight =
+    topBannerHeight +
     monthGroups.reduce((sum, _group, monthIndex) => sum + monthTotalHeight(monthIndex), 0) +
     (monthGroups.length - 1) * LAYOUT.BLOCK_GAP;
 
   const columnBg = backgroundColor ?? "none";
 
-  let currentY = 0;
+  let currentY = topBannerHeight;
   const monthOffsets = monthGroups.map((_, monthIndex) => {
     const offsetY = currentY;
     currentY += monthTotalHeight(monthIndex) + LAYOUT.BLOCK_GAP;
@@ -96,13 +131,20 @@ function CombinedScheduleSvg({ events, today, window, backgroundColor, showToday
       <defs>
         <pattern id="hatch" width={8} height={8} patternUnits="userSpaceOnUse" patternTransform="rotate(135)">
           {columnBg !== "none" && <rect width={8} height={8} fill={columnBg} />}
-          <path d="M 0 0 L 0 8" stroke="#182033" strokeWidth={1} opacity={0.5} />
+          <path d="M 0 0 L 0 8" stroke={Colors.NAVY} strokeWidth={1} opacity={0.5} />
         </pattern>
         <filter id="shadow" x="-10%" y="-30%" width="120%" height="170%">
-          <feDropShadow dx={0} dy={2} stdDeviation={2} floodColor="#050816" floodOpacity={0.3} />
+          <feDropShadow dx={0} dy={2} stdDeviation={2} floodColor={Colors.VOID} floodOpacity={0.3} />
         </filter>
       </defs>
       {backgroundColor && <rect width={LAYOUT.WIDTH} height={totalHeight} fill={backgroundColor} />}
+      {currentMonthOnCall && (
+        <OnCallPill
+          cy={Math.round(topBannerHeight / 2)}
+          name={currentMonthOnCall.name}
+          color={currentMonthOnCall.color}
+        />
+      )}
       {monthGroups.map(({ year, month, weeks }, monthIndex) => (
         <Fragment key={monthIndex}>
           <MonthBlock
@@ -128,7 +170,7 @@ function CombinedScheduleSvg({ events, today, window, backgroundColor, showToday
               y1={monthOffsets[monthIndex] + monthTotalHeight(monthIndex) + LAYOUT.BLOCK_GAP / 2}
               x2={LAYOUT.WIDTH}
               y2={monthOffsets[monthIndex] + monthTotalHeight(monthIndex) + LAYOUT.BLOCK_GAP / 2}
-              stroke="#4A5568"
+              stroke={Colors.SEPARATOR}
               strokeWidth={2}
             />
           )}

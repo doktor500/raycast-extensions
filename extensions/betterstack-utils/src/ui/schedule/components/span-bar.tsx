@@ -1,7 +1,6 @@
 import { type WeekSpanBar, LAYOUT, truncateLabel } from "../../layout";
-import { getTextColor } from "../../../utils/colors";
-
-const FONT_FAMILY = "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+import { FONT_FAMILY } from "../../../common/font";
+import { getTextColor } from "../../../common/colors";
 
 interface SpanBarProps {
   bar: WeekSpanBar;
