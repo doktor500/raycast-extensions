@@ -69,8 +69,6 @@ export default function Command() {
               anchorDate: weekAnchorDate,
               backgroundColor: Colors.DARK,
               allEvents: events,
-              onCallName,
-              onCallColor,
             })
           : buildCombinedScheduleSvg({
               events: filteredEvents,
@@ -78,6 +76,7 @@ export default function Command() {
               window: scheduleWindow,
               backgroundColor: Colors.DARK,
               showTodayMarker: false,
+              showOnCallPill: false,
               allEvents: events,
             });
       await exportSvgToClipboard(svg, environment.supportPath);
