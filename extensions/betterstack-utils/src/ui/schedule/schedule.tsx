@@ -98,7 +98,7 @@ function CombinedScheduleSvg({
 
   const monthOnCall = monthGroups.map(() => {
     if (!showOnCallPill) return null;
-    return findOnCallAtTime(today, events, colorMap);
+    return findOnCallAtTime(today, allEvents ?? events, colorMap);
   });
 
   const currentMonthOnCall = monthOnCall.find((m) => m !== null) ?? null;
