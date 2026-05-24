@@ -25,3 +25,8 @@ export function getCurrentWeekDays(date?: Date): Date[] {
   const monday = dateTime.minus({ days: dateTime.weekday - 1 }).startOf("day");
   return Array.from({ length: 7 }, (_, i) => monday.plus({ days: i }).toJSDate());
 }
+
+export function isDateInInterval(date: Date, start: Date, end: Date): boolean {
+  const dateTime = DateTime.fromJSDate(date);
+  return dateTime >= DateTime.fromJSDate(start) && dateTime < DateTime.fromJSDate(end);
+}

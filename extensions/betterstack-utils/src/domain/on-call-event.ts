@@ -1,3 +1,5 @@
+import { isDateInInterval } from "../common/dates";
+
 export interface OnCallEvent {
   started_at: string;
   ended_at: string;
@@ -15,12 +17,8 @@ export function formatUserName(user: User): string {
 }
 
 export function getCurrentOnCallUser(date: Date, events: OnCallEvent[]): User | null {
-  const noon = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0);
-
   for (const event of events) {
-    const start = new Date(event.started_at);
-    const end = new Date(event.ended_at);
-    if (noon >= start && noon < end) {
+    if (isDateInInterval(date, new Date(event.started_at), new Date(event.ended_at))) {
       return event.user;
     }
   }
